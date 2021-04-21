@@ -25,7 +25,7 @@ struct sdshdr {
 - 兼容部分C字符串函数
 
 ### 主要API
-[SDS API]（https://redisbook.com/preview/sds/api.html）
+[SDS API](http://redisbook.com/preview/sds/api.html)
 
 ## 链表
 
@@ -62,4 +62,4 @@ typedef struct list {
 ```
 
 ### 主要API
-[链表和链表节点的 API]（https://redisbook.com/preview/adlist/api.html）
+[链表和链表节点的 API](http://redisbook.com/preview/adlist/api.html)
