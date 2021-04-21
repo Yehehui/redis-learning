@@ -137,3 +137,7 @@ typedef struct dictType {
     void (*valDestructor)(void *privdata, void *obj);
 } dictType;
 ```
+
+#### 普通状态下的字典
+
+![](https://github.com/Yehehui/redis-learning/blob/main/image/%E6%99%AE%E9%80%9A%E7%8A%B6%E6%80%81%E4%B8%8B%E7%9A%84%E5%AD%97%E5%85%B8.png)
