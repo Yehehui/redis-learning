@@ -15,3 +15,8 @@ struct sdshdr {
     char buf[];
 };
 ```
+
+### 对比C字符串
+
+- len属性 获取长度复杂度为O(1)
+- 
