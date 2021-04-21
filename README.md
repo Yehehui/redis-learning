@@ -63,3 +63,77 @@ typedef struct list {
 
 ### 主要API
 [链表和链表节点的 API](http://redisbook.com/preview/adlist/api.html)
+
+## 字典
+
+### 实现
+
+#### 哈希表节点实现
+
+``` c
+typedef struct dictEntry {
+    // 键
+    void *key;
+    // 值
+    union {
+        void *val;
+        uint64_t u64;
+        int64_t s64;
+    } v;
+    // 指向下个哈希值相同的节点，处理冲突，形成链表
+    struct dictEntry *next;
+} dictEntry;
+```
+
+#### 哈希表实现
+
+``` c
+typedef struct dictht {
+    // 哈希表数组
+    dictEntry **table;
+    // 哈希表大小
+    unsigned long size;
+    // 哈希表大小掩码，用于计算索引值
+    // 总是等于 size - 1
+    unsigned long sizemask;
+    // 该哈希表已有节点的数量
+    unsigned long used;
+} dictht;
+```
+
+#### 字典实现
+
+``` c
+typedef struct dict {
+    // 类型特定函数,用于实现多态
+    dictType *type;
+    // 私有数据，保存了需要传给那些类型特定函数的可选参数
+    void *privdata;
+    // 哈希表
+    dictht ht[2];
+    // rehash 索引
+    // 当 rehash 不在进行时，值为 -1
+    int rehashidx; /* rehashing not in progress if rehashidx == -1 */
+} dict;
+```
+
+ht属性是一个包含两个哈希表的数组，一般情况下，字典只使用 ht[0] 哈希表，ht[1] 哈希表只会在对 ht[0] 哈希表进行 rehash 时使用。
+
+#### 字典类型实现
+
+``` c
+typedef struct dictType {
+    // 计算哈希值的函数
+    unsigned int (*hashFunction)(const void *key);
+    // 复制键的函数
+    void *(*keyDup)(void *privdata, const void *key);
+    // 复制值的函数
+    void *(*valDup)(void *privdata, const void *obj);
+    // 对比键的函数
+    int (*keyCompare)(void *privdata, const void *key1, const void *key2);
+    // 销毁键的函数
+    void (*keyDestructor)(void *privdata, void *key);
+    // 销毁值的函数
+    void (*valDestructor)(void *privdata, void *obj);
+} dictType;
+```
