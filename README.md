@@ -241,7 +241,7 @@ typedef struct intset {
     uint32_t encoding;
     // 集合包含的元素数量
     uint32_t length;
-    // 保存元素的数组
+    // 保存元素的数组，实际类型根据encoding取值设定
     int8_t contents[];
 } intset;
 ```
