@@ -224,8 +224,8 @@ typedef struct zskiplist {
 
 ### 特性
 
-1.层高为1-32之间的随机数
-2.按score值排序，值相同时按对象在哈希表中的索引排序
+1. 层高为1-32之间的随机数
+2. 按score值排序，值相同时按对象在哈希表中的索引排序
 
 ### 相关API
 [跳跃表API](http://redisbook.com/preview/skiplist/api.html)
