@@ -188,7 +188,7 @@ index = hash & dict->ht[x].sizemask;
 [字典API](http://redisbook.com/preview/dict/api.html)
 
 ## 跳跃表
-**用来实现redis中的有序集合，实现及维护较红黑树及平衡树简单**
+用来实现redis中的有序集合，实现及维护较红黑树及平衡树简单，通过在每个结点维护多个指向其他结点的指针，达到快速访问结点的目的
 ### 实现
 
 #### 跳跃表结点实现
