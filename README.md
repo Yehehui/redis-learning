@@ -229,3 +229,33 @@ typedef struct zskiplist {
 
 ### 相关API
 [跳跃表API](http://redisbook.com/preview/skiplist/api.html)
+
+## 整数集合
+集合键底层实现之一
+
+### 实现
+
+``` c
+typedef struct intset {
+    // 编码方式
+    uint32_t encoding;
+    // 集合包含的元素数量
+    uint32_t length;
+    // 保存元素的数组
+    int8_t contents[];
+} intset;
+```
+
+#### encoding取值
+- INTSET_ENC_INT16 (sizeof(int16_t))
+- INTSET_ENC_INT32 (sizeof(int32_t))
+- INTSET_ENC_INT64 (sizeof(int64_t))
+
+### 升级
+
+1. 根据新元素的类型， 扩展整数集合底层数组的空间大小， 并为新元素分配空间。
+2. 将底层数组现有的所有元素都转换成与新元素相同的类型， 并将类型转换后的元素放置到正确的位上， 而且在放置元素的过程中， 需要继续维持底层数组的有序性质不变。
+3. 将新元素添加到底层数组里面。
+
+### 相关API
+[整数集合API](http://redisbook.com/preview/intset/api.html)
