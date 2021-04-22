@@ -259,3 +259,9 @@ typedef struct intset {
 
 ### 相关API
 [整数集合API](http://redisbook.com/preview/intset/api.html)
+
+## 压缩列表
+压缩列表是列表键和哈希键的实现之一，为了节约内存而开发
+
+### 构成
+
