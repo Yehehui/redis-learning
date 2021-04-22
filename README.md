@@ -186,3 +186,46 @@ index = hash & dict->ht[x].sizemask;
 
 ### 字典API
 [字典API](http://redisbook.com/preview/dict/api.html)
+
+## 跳跃表
+**用来实现redis中的有序集合，实现及维护较红黑树及平衡树简单**
+### 实现
+
+#### 跳跃表结点实现
+``` c
+typedef struct zskiplistNode {
+    // 后退指针
+    struct zskiplistNode *backward;
+    // 分值
+    double score;
+    // 成员对象
+    robj *obj;
+    // 层
+    struct zskiplistLevel {
+        // 前进指针
+        struct zskiplistNode *forward;
+        // 跨度
+        unsigned int span;
+    } level[];
+} zskiplistNode;
+```
+
+#### 跳跃表实现
+``` c
+typedef struct zskiplist {
+    // 表头节点和表尾节点
+    struct zskiplistNode *header, *tail;
+    // 表中节点的数量
+    unsigned long length;
+    // 表中层数最大的节点的层数
+    int level;
+} zskiplist;
+```
+
+### 特性
+
+1.层高为1-32之间的随机数
+2.按score值排序，值相同时按对象在哈希表中的索引排序
+
+### 相关API
+[跳跃表API](http://redisbook.com/preview/skiplist/api.html)
