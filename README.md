@@ -80,7 +80,7 @@ typedef struct dictEntry {
         uint64_t u64;
         int64_t s64;
     } v;
-    // 指向下个哈希值相同的节点，处理冲突，形成链表
+    // 指向下个哈希值相同的节点，处理冲突，形成链表(新结点插入表头)
     struct dictEntry *next;
 } dictEntry;
 ```
