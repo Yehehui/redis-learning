@@ -143,7 +143,7 @@ typedef struct dictType {
 ![](https://github.com/Yehehui/redis-learning/blob/main/image/%E6%99%AE%E9%80%9A%E7%8A%B6%E6%80%81%E4%B8%8B%E7%9A%84%E5%AD%97%E5%85%B8.png)
 
 ### 哈希算法 
-当字典被用作数据库的底层实现， 或者哈希键的底层实现时， Redis 使用 MurmurHash2 算法来计算键的哈希值
+当字典被用作数据库的底层实现， 或者哈希键的底层实现时， Redis 使用 [MurmurHash2](https://zh.wikipedia.org/wiki/Murmur%E5%93%88%E5%B8%8C) 算法来计算键的哈希值
 
 ``` c
 # 使用字典设置的哈希函数，计算键 key 的哈希值
