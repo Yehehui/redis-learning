@@ -522,7 +522,7 @@ typedef struct zset {
 
 - 有序集合保存的元素数量小于 128 个
 - 有序集合保存的所有元素成员的长度都小于 64 字节
-- 
+
 满足以上条件时，使用ziplist作为底层实现，否则使用zset
 以上两个条件的上限值可通过配置文件中 zset-max-ziplist-entries 选项和 zset-max-ziplist-value 选项进行修改
 
