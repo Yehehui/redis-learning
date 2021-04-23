@@ -389,3 +389,5 @@ typedef struct redisObject {
 - raw 编码会调用两次内存分配函数来分别创建 redisObject 结构和 sdshdr 结构
 - embstr 编码则通过调用一次内存分配函数来分配一块连续的空间， 空间中依次包含 redisObject 和 sdshdr 两个结构
 
+![embstr编码的字符串对象](https://github.com/Yehehui/redis-learning/blob/main/image/embstr%E7%BC%96%E7%A0%81%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%AF%B9%E8%B1%A1.png)
+![raw编码的字符串对象](https://github.com/Yehehui/redis-learning/blob/main/image/raw%E7%BC%96%E7%A0%81%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%AF%B9%E8%B1%A1.png)
