@@ -467,5 +467,27 @@ int 编码的字符串对象和 embstr 编码的字符串对象在条件满足�
 
 #### 示例
 ![](https://github.com/Yehehui/redis-learning/blob/main/image/intset%E7%BC%96%E7%A0%81%E7%9A%84%E9%9B%86%E5%90%88%E5%AF%B9%E8%B1%A1.png)
-集合对象使用字典作为底层实现时， 字典的每个键都是一个字符串对象， 每个字符串对象包含了一个集合元素， 而字典的值则全部被设置为 NULL 。
+
+集合对象使用字典作为底层实现时， 字典的每个键都是一个字符串对象， 每个字符串对象包含了一个集合元素， 而字典的值则全部被设置为 NULL
+
 ![](https://github.com/Yehehui/redis-learning/blob/main/image/hashtable%E7%BC%96%E7%A0%81%E7%9A%84%E9%9B%86%E5%90%88%E5%AF%B9%E8%B1%A1.png)
+
+#### 编码转换
+
+- 集合对象保存的所有元素都是整数值
+- 集合对象保存的元素数量不超过 512 个
+
+满足以上条件时，使用intset作为底层实现，否则使用hashtable
+第两个条件的上限值可通过配置文件中 set-max-intset-entries 选项进行修改
+
+#### 集合对象命令实现
+
+|命令 |	intset 编码的实现方法 |	hashtable 编码的实现方法|
+|--|--|--|
+|SADD |	调用 intsetAdd 函数， 将所有新元素添加到整数集合里面。 |	调用 dictAdd ， 以新元素为键， NULL 为值， 将键值对添加到字典里面。|
+|SCARD |	调用 intsetLen 函数， 返回整数集合所包含的元素数量， 这个数量就是集合对象所包含的元素数量。| 	调用 dictSize 函数， 返回字典所包含的键值对数量， 这个数量就是集合对象所包含的元素数量。|
+|SISMEMBER |	调用 intsetFind 函数， 在整数集合中查找给定的元素， 如果找到了说明元素存在于集合， 没找到则说明元素不存在于集合。 |	调用 dictFind 函数， 在字典的键中查找给定的元素， 如果找到了说明元素存在于集合， 没找到则说明元素不存在于集合。|
+|SMEMBERS |	遍历整个整数集合， 使用 intsetGet 函数返回集合元素。 |	遍历整个字典， 使用 dictGetKey 函数返回字典的键作为集合元素。|
+|SRANDMEMBER |	调用 intsetRandom 函数， 从整数集合中随机返回一个元素。 |	调用 dictGetRandomKey 函数， 从字典中随机返回一个字典键。|
+|SPOP |	调用 intsetRandom 函数， 从整数集合中随机取出一个元素， 在将这个随机元素返回给客户端之后， 调用 intsetRemove 函数， 将随机元素从整数集合中删除掉。 |	调用 dictGetRandomKey 函数， 从字典中随机取出一个字典键， 在将这个随机字典键的值返回给客户端之后， 调用 dictDelete 函数， 从字典中删除随机字典键所对应的键值对。|
+|SREM |	调用 intsetRemove 函数， 从整数集合中删除所有给定的元素。 |	调用 dictDelete 函数， 从字典中删除所有键为给定元素的键值对。|
