@@ -340,3 +340,38 @@ typedef struct redisObject {
 |REDIS_HASH |	哈希对象|
 |REDIS_SET |	集合对象|
 |REDIS_ZSET | 有序集合对象|
+
+#### 编码和底层实现
+
+|编码常量 |	编码所对应的底层数据结构|
+|--|--|
+|REDIS_ENCODING_INT |	long 类型的整数|
+|REDIS_ENCODING_EMBSTR |	embstr 编码的简单动态字符串|
+|REDIS_ENCODING_RAW |	简单动态字符串|
+|REDIS_ENCODING_HT |	字典|
+|REDIS_ENCODING_LINKEDLIST |	双端链表|
+|REDIS_ENCODING_ZIPLIST |	压缩列表|
+|REDIS_ENCODING_INTSET |	整数集合|
+|REDIS_ENCODING_SKIPLIST |	跳跃表和字典|
+
+每种类型的对象都至少使用了两种不同的编码， 下面列出了每种类型的对象可以使用的编码
+
+|类型 |	编码 |	对象|
+|--|--|--|
+|REDIS_STRING |	REDIS_ENCODING_INT |	使用整数值实现的字符串对象。|
+|REDIS_STRING |	REDIS_ENCODING_EMBSTR |	使用 embstr 编码的简单动态字符串实现的字符串对象。|
+|REDIS_STRING |	REDIS_ENCODING_RAW |	使用简单动态字符串实现的字符串对象。|
+|REDIS_LIST |	REDIS_ENCODING_ZIPLIST |	使用压缩列表实现的列表对象。|
+|REDIS_LIST |	REDIS_ENCODING_LINKEDLIST |	使用双端链表实现的列表对象。|
+|REDIS_HASH |	REDIS_ENCODING_ZIPLIST |	使用压缩列表实现的哈希对象。|
+|REDIS_HASH |	REDIS_ENCODING_HT |	使用字典实现的哈希对象。|
+|REDIS_SET |	REDIS_ENCODING_INTSET |	使用整数集合实现的集合对象。|
+|REDIS_SET |	REDIS_ENCODING_HT |	使用字典实现的集合对象。|
+|REDIS_ZSET |	REDIS_ENCODING_ZIPLIST |	使用压缩列表实现的有序集合对象。|
+|REDIS_ZSET |	REDIS_ENCODING_SKIPLIST |	使用跳跃表和字典实现的有序集合对象。|
+
+#### 实例分析
+
+- 在列表对象包含的元素比较少时，Redis 使用压缩列表作为列表对象的底层实现
+- 因为压缩列表比双端链表更节约内存，并且在元素数量较少时，在内存中以连续块方式保存的压缩列表比起双端链表可以更快被载入到缓存中
+- 随着列表对象包含的元素越来越多，使用压缩列表来保存元素的优势逐渐消失时，对象就会将底层实现从压缩列表转向功能更强、也更适合保存大量元素的双端链表上面
