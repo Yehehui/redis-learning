@@ -408,3 +408,29 @@ int 编码的字符串对象和 embstr 编码的字符串对象在条件满足�
 |STRLEN |	拷贝对象所保存的整数值， 将这个拷贝转换成字符串值， 计算并返回这个字符串值的长度。| 	调用 sdslen 函数， 返回字符串的长度。| 	调用 sdslen 函数， 返回字符串的长度。|
 |SETRANGE |	将对象转换成 raw 编码， 然后按 raw 编码的方式执行此命令。 |	将对象转换成 raw 编码， 然后按 raw 编码的方式执行此命令。|	将字符串特定索引上的值设置为给定的字符。|
 |GETRANGE |	拷贝对象所保存的整数值， 将这个拷贝转换成字符串值， 然后取出并返回字符串指定索引上的字符。| 	直接取出并返回字符串指定索引上的字符。| 	直接取出并返回字符串指定索引上的字符。|
+
+### 列表对象
+列表对象的编码可以是 ziplist 或者 linkedlist
+
+#### 编码转换
+
+- 列表对象保存的所有字符串元素的长度都小于 64 字节
+- 列表对象保存的元素数量小于 512 个
+
+满足以上条件时，使用ziplist作为底层实现，否则使用linkedlist
+以上两个条件的上限值可通过配置文件中 list-max-ziplist-value 选项和 list-max-ziplist-entries 选项进行修改
+
+#### 列表对象命令实现
+
+|命令 |	ziplist 编码的实现方法 |	linkedlist 编码的实现方法|
+|--|--|--|
+|LPUSH |	调用 ziplistPush 函数， 将新元素推入到压缩列表的表头。| 	调用 listAddNodeHead 函数， 将新元素推入到双端链表的表头。|
+|RPUSH |	调用 ziplistPush 函数， 将新元素推入到压缩列表的表尾。| 	调用 listAddNodeTail 函数， 将新元素推入到双端链表的表尾。|
+|LPOP |	调用 ziplistIndex 函数定位压缩列表的表头节点， 在向用户返回节点所保存的元素之后， 调用 ziplistDelete 函数删除表头节点。| 	调用 listFirst 函数定位双端链表的表头节点， 在向用户返回节点所保存的元素之后， 调用 listDelNode 函数删除表头节点。|
+|RPOP |	调用 ziplistIndex 函数定位压缩列表的表尾节点， 在向用户返回节点所保存的元素之后， 调用 ziplistDelete 函数删除表尾节点。| 	调用 listLast 函数定位双端链表的表尾节点， 在向用户返回节点所保存的元素之后， 调用 listDelNode 函数删除表尾节点。|
+|LINDEX |	调用 ziplistIndex 函数定位压缩列表中的指定节点， 然后返回节点所保存的元素。 |	调用 listIndex 函数定位双端链表中的指定节点， 然后返回节点所保存的元素。|
+|LLEN |	调用 ziplistLen 函数返回压缩列表的长度。| 	调用 listLength 函数返回双端链表的长度。|
+|LINSERT |	插入新节点到压缩列表的表头或者表尾时， 使用 ziplistPush 函数； 插入新节点到压缩列表的其他位置时， 使用 ziplistInsert 函数。| 	调用 listInsertNode 函数， 将新节点插入到双端链表的指定位置。|
+|LREM |	遍历压缩列表节点， 并调用 ziplistDelete 函数删除包含了给定元素的节点。 |	遍历双端链表节点， 并调用 listDelNode 函数删除包含了给定元素的节点。|
+|LTRIM |	调用 ziplistDeleteRange 函数， 删除压缩列表中所有不在指定索引范围内的节点。| 	遍历双端链表节点， 并调用 listDelNode 函数删除链表中所有不在指定索引范围内的节点。|
+|LSET |	调用 ziplistDelete 函数， 先删除压缩列表指定索引上的现有节点， 然后调用 ziplistInsert 函数， 将一个包含给定元素的新节点插入到相同索引上面。| 	调用 listIndex 函数， 定位到双端链表指定索引上的节点， 然后通过赋值操作更新节点的值。|
