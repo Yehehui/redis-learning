@@ -314,3 +314,29 @@ typedef struct intset {
 
 ### 相关API
 [压缩列表 API](http://redisbook.com/preview/ziplist/api.html)
+
+## 对象
+redis采用对象来表示数据库中的键和值
+
+### 实现、类型和编码
+``` c
+typedef struct redisObject {
+    // 类型
+    unsigned type:4;
+    // 编码
+    unsigned encoding:4;
+    // 指向底层实现数据结构的指针
+    void *ptr;
+    // ...
+} robj;
+```
+
+#### 类型
+
+|类型常量 |	对象的名称|
+|--|--|
+|REDIS_STRING| 	字符串对象|
+|REDIS_LIST |	列表对象|
+|REDIS_HASH |	哈希对象|
+|REDIS_SET |	集合对象|
+|REDIS_ZSET | 有序集合对象|
