@@ -598,4 +598,8 @@ redis的引用计数系统不止用于内存回收，也用于对象共享
 
 当我们创建了一个值为100的键A后，再创建一个值为100的键B，键B共享键A的redisObject
 
+![](https://github.com/Yehehui/redis-learning/blob/main/image/%E5%85%B1%E4%BA%AB%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%AF%B9%E8%B1%A1.png)
 
+ Redis 会在初始化服务器时， 创建一万个字符串对象， 这些对象包含了从 0 到 9999 的所有整数值， 当服务器需要用到值为 0 到 9999 的字符串对象时， 服务器就会使用这些共享对象， 而不是新创建对象。数量可以通过修改 redis.h/REDIS_SHARED_INTEGERS 常量来修改
+ 
+共享对象不单单只有字符串键可以使用，那些在数据结构中嵌套了字符串对象的对象（linkedlist 编码的列表对象、hashtable 编码的哈希对象、hashtable 编码的集合对象、以及 zset 编码的有序集合对象）都可以使用这些共享对象
